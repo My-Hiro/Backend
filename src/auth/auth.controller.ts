@@ -1,7 +1,29 @@
-import { Controller, Post, Body, UnauthorizedException, BadRequestException } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UnauthorizedException,
+  BadRequestException,
+} from '@nestjs/common';
 import { SupabaseService } from '../supabase/supabase.service';
 import { UsersService } from '../users/users.service';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiProperty } from '@nestjs/swagger';
+import { IsEmail, IsString, IsOptional, MinLength } from 'class-validator';
+
+export class SignUpDto {
+  @ApiProperty() @IsEmail() email: string;
+  @ApiProperty() @IsString() @MinLength(8) password: string;
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  full_name?: string;
+  @ApiProperty({ required: false }) @IsOptional() @IsString() role?: string;
+}
+
+export class SignInDto {
+  @ApiProperty() @IsEmail() email: string;
+  @ApiProperty() @IsString() password: string;
+}
 
 @ApiTags('auth')
 @Controller('auth')
@@ -13,7 +35,7 @@ export class AuthController {
 
   @Post('signup')
   @ApiOperation({ summary: 'Sign up a new user' })
-  async signUp(@Body() body: any) {
+  async signUp(@Body() body: SignUpDto) {
     const client = this.supabaseService.getClient();
     const { data, error } = await client.auth.signUp({
       email: body.email,
@@ -35,7 +57,7 @@ export class AuthController {
 
   @Post('signin')
   @ApiOperation({ summary: 'Sign in a user' })
-  async signIn(@Body() body: any) {
+  async signIn(@Body() body: SignInDto) {
     const client = this.supabaseService.getClient();
     const { data, error } = await client.auth.signInWithPassword({
       email: body.email,

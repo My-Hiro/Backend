@@ -1,9 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards } from '@nestjs/common';
-import { ProductsService } from './products.service';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+  UseGuards,
+  SetMetadata,
+} from '@nestjs/common';
+import { ProductsService, Product } from './products.service';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
-import { SetMetadata } from '@nestjs/common';
 
 const Roles = (...roles: string[]) => SetMetadata('roles', roles);
 
@@ -14,7 +24,9 @@ export class ProductsController {
 
   @Get()
   @ApiOperation({ summary: 'Get all products' })
-  findAll(@Query() query: any) {
+  findAll(
+    @Query() query: { category?: string; merchant?: string; status?: string },
+  ) {
     return this.productsService.findAll(query);
   }
 
@@ -29,7 +41,7 @@ export class ProductsController {
   @Roles('merchant', 'admin')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a new product' })
-  create(@Body() createProductDto: any) {
+  create(@Body() createProductDto: Partial<Product>) {
     return this.productsService.create(createProductDto);
   }
 
@@ -38,7 +50,7 @@ export class ProductsController {
   @Roles('merchant', 'admin')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update a product' })
-  update(@Param('id') id: string, @Body() updateProductDto: any) {
+  update(@Param('id') id: string, @Body() updateProductDto: Partial<Product>) {
     return this.productsService.update(id, updateProductDto);
   }
 

@@ -1,11 +1,24 @@
-import { Controller, Get, Post, Body, Patch, Param, Query, UseGuards, Request } from '@nestjs/common';
-import { MerchantsService } from './merchants.service';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Query,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
+import { MerchantsService, Merchant } from './merchants.service';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { RolesGuard } from '../auth/roles.guard';
-import { SetMetadata } from '@nestjs/common';
 
-const Roles = (...roles: string[]) => SetMetadata('roles', roles);
+interface RequestWithUser {
+  user: {
+    userId: string;
+    [key: string]: any;
+  };
+}
 
 @ApiTags('merchants')
 @Controller('merchants')
@@ -14,7 +27,7 @@ export class MerchantsController {
 
   @Get()
   @ApiOperation({ summary: 'Get all merchants' })
-  findAll(@Query() query: any) {
+  findAll(@Query() query: { status?: string }) {
     return this.merchantsService.findAll(query);
   }
 
@@ -22,7 +35,7 @@ export class MerchantsController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get current merchant profile' })
-  findMe(@Request() req: any) {
+  findMe(@Request() req: RequestWithUser) {
     return this.merchantsService.findByOwner(req.user.userId);
   }
 
@@ -36,15 +49,24 @@ export class MerchantsController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Register a new merchant' })
-  create(@Body() createMerchantDto: any, @Request() req: any) {
-    return this.merchantsService.create({ ...createMerchantDto, owner_id: req.user.userId });
+  create(
+    @Body() createMerchantDto: Partial<Merchant>,
+    @Request() req: RequestWithUser,
+  ) {
+    return this.merchantsService.create({
+      ...createMerchantDto,
+      owner_id: req.user.userId,
+    });
   }
 
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update merchant profile' })
-  update(@Param('id') id: string, @Body() updateMerchantDto: any) {
+  update(
+    @Param('id') id: string,
+    @Body() updateMerchantDto: Partial<Merchant>,
+  ) {
     // In a real app, verify the user owns the merchant
     return this.merchantsService.update(id, updateMerchantDto);
   }

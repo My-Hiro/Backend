@@ -1,9 +1,16 @@
-import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
-import { CategoriesService } from './categories.service';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  UseGuards,
+  SetMetadata,
+} from '@nestjs/common';
+import { CategoriesService, Category } from './categories.service';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
-import { SetMetadata } from '@nestjs/common';
 
 const Roles = (...roles: string[]) => SetMetadata('roles', roles);
 
@@ -29,7 +36,7 @@ export class CategoriesController {
   @Roles('admin')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a new category (Admin only)' })
-  create(@Body() createCategoryDto: any) {
+  create(@Body() createCategoryDto: Partial<Category>) {
     return this.categoriesService.create(createCategoryDto);
   }
 }
