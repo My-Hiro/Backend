@@ -13,6 +13,8 @@ import { ReviewsModule } from './reviews/reviews.module';
 import { BookmarksModule } from './bookmarks/bookmarks.module';
 import { DiscoveryModule } from './discovery/discovery.module';
 import { StoresModule } from './stores/stores.module';
+import { AdminModule } from './admin/admin.module';
+import { MediaModule } from './media/media.module';
 
 @Module({
   imports: [
@@ -28,6 +30,8 @@ import { StoresModule } from './stores/stores.module';
     BookmarksModule,
     DiscoveryModule,
     StoresModule,
+    AdminModule,
+    MediaModule,
   ],
   controllers: [AppController],
   providers: [AppService],
