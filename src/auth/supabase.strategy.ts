@@ -9,7 +9,7 @@ export class SupabaseStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: configService.get<string>('SUPABASE_JWT_SECRET') || 'fallback_secret',
+      secretOrKey: configService.get<string>('SUPABASE_SECRET_KEY') || configService.get<string>('SUPABASE_JWT_SECRET') || 'fallback_secret',
     });
   }
 

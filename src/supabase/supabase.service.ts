@@ -15,10 +15,11 @@ export class SupabaseService {
     }
 
     const supabaseUrl = this.configService.get<string>('SUPABASE_URL');
-    const supabaseKey = this.configService.get<string>('SUPABASE_SERVICE_ROLE_KEY');
+    // Using the new naming convention: Public Key (anon) and Secret Key (service_role)
+    const supabaseKey = this.configService.get<string>('SUPABASE_SECRET_KEY') || this.configService.get<string>('SUPABASE_SERVICE_ROLE_KEY');
 
     if (!supabaseUrl || !supabaseKey) {
-      this.logger.error('Supabase URL or Key is missing!');
+      this.logger.error('Supabase URL or Secret Key is missing!');
       throw new Error('Supabase credentials are not configured.');
     }
 
