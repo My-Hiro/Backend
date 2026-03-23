@@ -33,6 +33,10 @@ export class MediaController {
           type: 'string',
           description: 'Optional path inside the bucket',
         },
+        preset: {
+          type: 'string',
+          description: 'Alias for path',
+        },
       },
     },
   })
@@ -40,7 +44,8 @@ export class MediaController {
   upload(
     @UploadedFile() file: Express.Multer.File,
     @Body('path') path?: string,
+    @Body('preset') preset?: string,
   ) {
-    return this.mediaService.upload(file, path);
+    return this.mediaService.upload(file, path || preset);
   }
 }
