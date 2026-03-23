@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { MerchantsService } from '../merchants/merchants.service';
 import { ProductsService } from '../products/products.service';
+import { StoresService } from './stores.service';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
@@ -18,6 +19,7 @@ export class StoresController {
   constructor(
     private readonly merchantsService: MerchantsService,
     private readonly productsService: ProductsService,
+    private readonly storesService: StoresService,
   ) {}
 
   @Get(':id/profile')
@@ -46,8 +48,7 @@ export class StoresController {
   @Post(':id/report-abuse')
   @ApiOperation({ summary: 'Report store abuse' })
   reportAbuse(@Param('id') id: string, @Body() body: any) {
-    // In a real app, save to a 'reports' table
-    return { success: true };
+    return this.storesService.reportAbuse(id, body);
   }
 
   @Get(':id/verification-documents')
@@ -55,7 +56,7 @@ export class StoresController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'List verification documents' })
   listDocs(@Param('id') id: string) {
-    return { rows: [] };
+    return this.storesService.listVerificationDocuments(id);
   }
 
   @Post(':id/verification-documents')
@@ -63,7 +64,7 @@ export class StoresController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Upload verification document' })
   uploadDoc(@Param('id') id: string, @Body() body: any) {
-    return { id: 'doc-1', ...body };
+    return this.storesService.uploadVerificationDocument(id, body);
   }
 
   @Post(':id/verification/submit')
@@ -71,6 +72,6 @@ export class StoresController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Submit verification' })
   submitVerification(@Param('id') id: string) {
-    return { success: true };
+    return this.storesService.submitVerification(id);
   }
 }

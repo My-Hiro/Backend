@@ -1,16 +1,46 @@
-import { Controller, Post, Body, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  Controller,
+  Post,
+  UseGuards,
+  UseInterceptors,
+  UploadedFile,
+  Body,
+} from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiConsumes, ApiBody } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { MediaService } from './media.service';
 
 @ApiTags('media')
 @Controller('media')
 export class MediaController {
+  constructor(private readonly mediaService: MediaService) {}
+
   @Post('upload')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+        path: {
+          type: 'string',
+          description: 'Optional path inside the bucket',
+        },
+      },
+    },
+  })
   @ApiOperation({ summary: 'Upload a file' })
-  upload(@Body() body: any) {
-    // In a real app, integrate with Supabase Storage
-    return { url: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=400&q=70' };
+  upload(
+    @UploadedFile() file: Express.Multer.File,
+    @Body('path') path?: string,
+  ) {
+    return this.mediaService.upload(file, path);
   }
 }
