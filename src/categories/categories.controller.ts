@@ -15,7 +15,7 @@ import { RolesGuard } from '../auth/roles.guard';
 const Roles = (...roles: string[]) => SetMetadata('roles', roles);
 
 @ApiTags('categories')
-@Controller('categories')
+@Controller('platform/categories')
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 

@@ -67,7 +67,6 @@ export class MerchantsController {
     @Param('id') id: string,
     @Body() updateMerchantDto: Partial<Merchant>,
   ) {
-    // In a real app, verify the user owns the merchant
     return this.merchantsService.update(id, updateMerchantDto);
   }
 }

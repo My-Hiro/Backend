@@ -11,6 +11,8 @@ import { CategoriesModule } from './categories/categories.module';
 import { InventoryModule } from './inventory/inventory.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { BookmarksModule } from './bookmarks/bookmarks.module';
+import { DiscoveryModule } from './discovery/discovery.module';
+import { StoresModule } from './stores/stores.module';
 
 @Module({
   imports: [
@@ -24,6 +26,8 @@ import { BookmarksModule } from './bookmarks/bookmarks.module';
     InventoryModule,
     ReviewsModule,
     BookmarksModule,
+    DiscoveryModule,
+    StoresModule,
   ],
   controllers: [AppController],
   providers: [AppService],
